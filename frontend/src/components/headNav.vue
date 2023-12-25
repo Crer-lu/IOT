@@ -17,7 +17,7 @@
             </a-menu>
         </div>
         <div class="right-menu">
-            <a-menu v-model:selectedKeys="current" theme="light" mode="horizontal" :key="flush"> 
+            <a-menu v-model:selectedKeys="current" theme="light" mode="horizontal"> 
                 <!-- 此处为右侧菜单的其他项，例如用户菜单 -->
                 <!-- TODO：右上角登录逻辑要改 -->
                 <template v-if="showlogin">
@@ -60,19 +60,20 @@
 </template>
 
 <script>
-
-import { h, ref } from 'vue';
+import router from '@/route/index'
+import { h, ref, watch, inject } from 'vue';
 import { LogoutOutlined, CommentOutlined, BarChartOutlined, AppleOutlined, HomeOutlined, AppstoreOutlined, PhoneOutlined, UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons-vue';
 
 export default {
     data: () => ({
-        flush: 0,
         showlogin: localStorage.getItem('email'),
     }),
     setup(){
         const current = ref(['mail']);
+        const refresh = inject("reload");
         return {
             current,
+            refresh
         }
     },
     components: {
@@ -93,20 +94,11 @@ export default {
         },
         exit() {
             this.$store.commit('logout')
+            this.refresh()
             this.showlogin = null;
         },
-        forceRender(){
-            this.flush++;
-        }
     },
-    watch: {
-        'this.$router.currentRoute.path': function (){
-            this.forceRender();
-            console.log("flush="+this.flush)
-            this.showlogin = localStorage.getItem('email');
-        }
-    }
-};
+}
 </script>
 
 <style scoped>

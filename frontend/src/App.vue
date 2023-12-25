@@ -2,7 +2,7 @@
   <div id="app">
     <a-layout style="Height:100%">
       <div>
-        <headNav></headNav>
+        <headNav v-if="isRefresh"></headNav>
       </div>
       <a-layout-content style scoped="minHeight:calc(100% - 250px)">
         <router-view></router-view>
@@ -17,11 +17,26 @@
 <script>
 import headNav from '@/components/headNav'
 import footer from '@/components/footer'
+import { onMounted, ref, watch, nextTick, provide, } from 'vue'
+
 export default {
   name: 'app',
   components: {
     'headNav': headNav,
     'nfooter': footer
+  },
+  setup() {
+    const isRefresh = ref(true)
+    const reload = () =>{
+      isRefresh.value = false
+      nextTick(() => {
+        isRefresh.value = true
+      })
+    }
+    provide("reload", reload);
+    return {
+      isRefresh,
+    };
   }
 }
 </script>

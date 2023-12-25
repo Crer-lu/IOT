@@ -81,6 +81,7 @@ const columns = [
         title: "类型",
         dataIndex: "kind",
         width: "15%",
+        slots: { customRender: "kind"}
     },
     {
         title: "描述",
@@ -96,6 +97,7 @@ const columns = [
         title: "选项",
         width: "17%",
         dataIndex: "option",
+        slots: { customRender: "option"}
     },
 ];
 

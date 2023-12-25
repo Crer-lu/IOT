@@ -56,6 +56,8 @@ ROOT_URLCONF = 'IOTbackend.urls'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+APPEND_SLASH=False
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

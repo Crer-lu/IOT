@@ -78,7 +78,7 @@
 <script>
 import { PhoneOutlined, UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons-vue';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, inject } from 'vue';
 import API from "@/plugins/axiosInstance"
 import HeadNav from '@/components/headNav.vue';
 
@@ -124,7 +124,8 @@ export default {
                         console.log(this.$store.state.user.token)
                         console.log(this.$store.state.user.email)
                         console.log(this.$store.state.user.userid)
-                        this.$router.push({path:'/user/info', replace:true})// todo 右上角登录没变化
+                        this.$router.push({path:'/user/info', replace:true})
+                        this.refresh()
                     } else {
                         window.alert(res.data.message)
                     }
@@ -167,6 +168,7 @@ export default {
             password: '',
             phone: '',
         });
+        const refresh = inject("reload");
 
         const formLogRegRef = ref();
 
@@ -251,7 +253,8 @@ export default {
             formLogRegRef,
             rules,
             logInfoStatus,
-            regInfoStatus
+            regInfoStatus,
+            refresh
         }
     },
     mounted:function(){
@@ -260,6 +263,7 @@ export default {
         if(email){
             console.log("已登录，跳转至用户页面")
             this.$router.push({path:'/user/info', replace:true})
+            refresh()
         }else{
             console.log("未登录")
         }

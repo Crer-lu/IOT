@@ -11,29 +11,31 @@
                 <a-button type="dashed" @click="showData"> 确定 </a-button>
             </div>
             <a-table :columns="columns" :data-source="messageList" :pagination="ipagination1" @change="handleTableChange2">
-                <template v-slot:bodyCell="{record}">    
-                    <template v-if="record.alert">
-                        <a-tag color="red">警告</a-tag>
-                    </template>
-                    <template v-else>
-                        <a-tag color="blue">正常</a-tag>
+                <template v-slot:bodyCell="{column, record}">
+                    <template v-if="column.dataIndex==='alert'">
+                        <template v-if="record.alert">
+                            <a-tag color="red">警告</a-tag>
+                        </template>
+                        <template v-else>
+                            <a-tag color="blue">正常</a-tag>
+                        </template>
                     </template>
                 </template>
             </a-table>
         </div>
         <div class="map">
-            <template v-if="polylinePath !== null">
+            <template v-if="polylinePath.length">
                 <BingMap
+                v-if="mapRefresh"
                 :apiKey=bingapi
                 :zoom="10"
                 :polylinePath="polylinePath"     />
             </template>
-
-       
         </div>
     </div>
 </template>
 <script>
+import { nextTick, ref } from "vue";
 import API from '@/plugins/axiosInstance';
 import BingMap from '@/components/BingMap'; // 确保路径正确
 const columns = [
@@ -79,9 +81,8 @@ export default {
             timer: undefined,
 
             user: this.$store.state.user.name,
-
             //地图坐标
-            polylinePath: null,
+            polylinePath: [],
 
             //这个是配置表格分页的参数，antd of vue本身对表格数据就有一定处理了
             ipagination1: {
@@ -102,6 +103,12 @@ export default {
     components: {
         BingMap,
     },
+    setup(){
+        const mapRefresh = ref(true)
+        return {
+            mapRefresh
+        }
+    },
     methods: {
         //这个是实现表格分页跳转的函数
         handleTableChange2(pagination, filters, sorter) {
@@ -113,6 +120,8 @@ export default {
         handleSelectChange(value) {
             console.log(value)
             this.selectId = value
+            this.polylinePath = []
+            this.getMessage()
         },
         getDevice() {
             API(
